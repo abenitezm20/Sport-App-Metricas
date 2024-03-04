@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-service
+  labels:
+    app: metrics-service
+  namespace: eks-sport-app
+  annotations:
+    monitoring: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics-service
+  template:
+    metadata:
+      labels:
+        app: metrics-service
+    spec:
+      containers:
+      - name: metrics-service
+        image: 790562586335.dkr.ecr.us-east-1.amazonaws.com/proyecto-final-metrics-service
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 60
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+          requests: 
+            memory: "1Gi"
+            cpu: "500m"
